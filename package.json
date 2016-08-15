@@ -1,0 +1,27 @@
+{
+  "name": "clammy_book_store",
+  "version": "1.0.0",
+  "description": "A cool and hip book store",
+  "main": "index.js",
+  "dependencies": {
+    "pg-promise": "^5.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamestewartjr/clammy-tayra.git"
+  },
+  "keywords": [
+    "books",
+    "db"
+  ],
+  "author": "James and Phil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jamestewartjr/clammy-tayra/issues"
+  },
+  "homepage": "https://github.com/jamestewartjr/clammy-tayra#readme"
+}
