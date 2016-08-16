@@ -1,8 +1,10 @@
 extends ../layout
 
+
 block content
 
-
+  a(href="/")='Go Home'
   ol
     for book in books
-      li= book.title
+      li
+        a(href="books/"+book.id)=book.title
