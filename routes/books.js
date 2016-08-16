@@ -1,17 +1,29 @@
 var express = require('express');
 var router = express.Router();
-var database = require('../database')
+var database = require('../database');
 
-// GET /books
-// router.get('/', function(req, res, next) {
-//   res.render('books/index', {
-//     books: books
-//   })
-// });
+router.get('/new', function(req, res) {
+  database.getAllGenres()
+    .then(function(genres){
+      res.render('books/new',{
+        genres: genres
+      })
+    })
+})
 
-// GET /books/:bookId
-router.get('/:bookId', function(req, res, next) {
-  database.getBookById(req.params.bookId)
+router.post('/', function(req, res) {
+  database.createBook(req.body.book)
+    .catch(function(error){
+      res.status(500).send(error)
+    })
+    .then(function(book){
+      res.redirect('/books/'+book.id)
+    })
+})
+
+// Bool Show route
+router.get('/:bookId', function(req, res) {
+  database.getBookWithAuthorsAndGenresByBookId(req.params.bookId)
     .then(function(book){
       res.render('books/show', {
         book: book
