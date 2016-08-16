@@ -83,7 +83,7 @@ const createBook = function(attributes){
       return Promise.all([
         associateAuthorsWithBook(book.id, authors.map(a => a.id)),
         associateGenresWithBook(book.id, attributes.genres),
-      ]).then(function(results){
+      ]).then(function(){
         return book;
       })
     })
