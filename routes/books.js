@@ -3,11 +3,11 @@ var router = express.Router();
 var database = require('../database')
 
 // GET /books
-router.get('/', function(req, res, next) {
-  res.render('books/index', {
-    books: books
-  })
-});
+// router.get('/', function(req, res, next) {
+//   res.render('books/index', {
+//     books: books
+//   })
+// });
 
 // GET /books/:bookId
 router.get('/:bookId', function(req, res, next) {
@@ -19,6 +19,18 @@ router.get('/:bookId', function(req, res, next) {
     })
     .catch(function(error){
       res.status(500).send(error)
+    })
+});
+
+router.get('/', function(req, res, next){
+  database.getAllBooksWithAuthors()
+    .then(function(books){
+      res.render('books/index', {
+        books: books
+      })
+    })
+    .catch(function(error){
+      throw error;
     })
 });
 
