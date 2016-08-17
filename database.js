@@ -189,8 +189,34 @@ const updateAuthorsForBook = function(bookId, authors){
     })
 }
 
-const updateGenresForBook = function(bookIds, genres){
+const findOrCreateGenre = function(attributes){
+  return db.oneOrNone('SELECT * FROM genres WHERE genres.title=$1 LIMIT 1', [attributes.title])
+    .then(genre => {
+      console.log('findOrCreateGenre', genre)
+      if (genre) return genre;
+      return createGenre(attributes)
+    });
+}
 
+const updateGenresForBook = function(bookId, genres){
+  console.log('updating genres', bookId, genres)
+  // remove exist author join table rows AKA links
+  // find or create author
+  // create join table row linking book to author
+
+  return db.none('DELETE FROM book_genres WHERE book_id=$1', [bookId])
+    .then(()=> {
+      const findOrCreateGenresQueries = []
+      genres.forEach(genre => {
+        if (genre.title === '') return;
+        findOrCreateGenresQueries.push(findOrCreateGenre(genre))
+      })
+
+      return Promise.all(findOrCreateGenresQueries).then(genres => {
+        console.log('FOUND OR CREATED GENRES: ', genres)
+        return associateGenresWithBook(bookId, genres.map(a => a.id))
+      })
+    })
 }
 
 
