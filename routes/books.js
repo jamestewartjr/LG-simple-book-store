@@ -21,7 +21,7 @@ router.post('/', function(req, res) {
     })
 })
 
-// Bool Show route
+// Book Show route
 router.get('/:bookId', function(req, res) {
   database.getBookWithAuthorsAndGenresByBookId(req.params.bookId)
     .then(function(book){
@@ -36,6 +36,7 @@ router.get('/:bookId', function(req, res) {
 
 router.get('/', function(req, res, next){
   database.getAllBooksWithAuthors()
+  database.searchForBooks(req.query)
     .then(function(books){
       res.render('books/index', {
         books: books

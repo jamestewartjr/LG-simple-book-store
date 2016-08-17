@@ -147,6 +147,34 @@ const getGenresByBookId = function(bookId){
   return db.any(sql, [bookId])
 }
 
+const updateBook = function(attributes){
+  const sql = `
+    UPDATE
+      books (title)
+    SET
+      books.id
+    WHERE
+      books_id=$1
+  `
+  var queries = [
+    db.one(sql, [attributes.title])
+  ]
+  attributes.authors.forEach(function(author){
+    queries.push(createAuthor(author))
+  })
+
+  return Promise.all(queries)
+    .then(function(authors){
+      var book = authors.shift()
+      return Promise.all([
+        associateAuthorsWithBook(book.id, authors.map(a => a.id)),
+        associateGenresWithBook(book.id, attributes.genres),
+      ]).then(function(){
+        return book;
+      })
+    })
+}
+
 
 const getBookWithAuthorsAndGenresByBookId = function(bookId){
   return Promise.all([
@@ -162,6 +190,71 @@ const getBookWithAuthorsAndGenresByBookId = function(bookId){
     })
 }
 
+const searchForBooks = function(options){
+  const variables = []
+  let sql = `
+    SELECT
+      DISTINCT(books.*)
+    FROM
+      books
+  `
+  if (options.search_query){
+    let search_query = options.search_query
+      .toLowerCase()
+      .replace(/^ */, '%')
+      .replace(/ *$/, '%')
+      .replace(/ +/g, '%')
+
+    variables.push(search_query)
+    sql += `
+        WHERE
+      LOWER(books.title) LIKE $${variables.length}
+    `
+  }
+  console.log('----->', sql, variables)
+  return db.any(sql, variables)
+}
+
+const searchForBook = searchTerm => {
+   const sql = `
+     SELECT
+       DISTINCT(books.*)
+     FROM
+       books
+     JOIN
+       book_author
+     ON
+       authors.id=book_author.author_id
+     JOIN
+       books
+     ON
+       book_author.book_id=books.id
+     WHERE
+       authors.author LIKE '$1%';
+   `
+   return db.any(sql, [searchTerm])
+ }
+
+ const searchForAuthor = searchTerm => {
+   const sql = `
+     SELECT
+       DISTINCT(authors.*)
+     FROM
+       authors
+     JOIN
+       book_author
+     ON
+       books.id=book_author.book_id
+     JOIN
+       authors
+     ON
+       book_author.author_id=authors.id
+     WHERE
+       authors.author LIKE '$1%';
+   `
+   return db.any(sql, [searchTerm])
+ }
+
 module.exports = {
   pgp: pgp,
   db: db,
@@ -172,15 +265,5 @@ module.exports = {
   createBook: createBook,
   getAllGenres: getAllGenres,
   getAuthorsByBookId: getAuthorsByBookId,
+  searchForBooks:searchForBooks,
 };
-//
-// db.any("select books.* from books", [true])
-//   .then(function(data){
-//     console.log("DATA:", data);
-//   })
-//   .catch(function (error){
-//     console.log("ERROR:". error);
-//   })
-// .finally(function() {
-//   pgp.end();
-// });

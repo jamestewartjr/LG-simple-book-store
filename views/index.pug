@@ -2,7 +2,11 @@ extends layout
 
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1= 'The JP Book Store Experience'
+  p Our Store Is Always Open
 
   a(href="/books")='Our available books'
+
+  form(action="/books", method="get")
+    input(type="text" name="search_query", placeholder="Book Title")
+    input(type="submit", value="Search Now!")
