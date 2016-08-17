@@ -147,32 +147,78 @@ const getGenresByBookId = function(bookId){
   return db.any(sql, [bookId])
 }
 
-const updateBook = function(attributes){
+const updateBookTitle = function(bookId, title){
   const sql = `
     UPDATE
-      books (title)
+      books
     SET
-      books.id
+      title=$2
     WHERE
-      books_id=$1
+      books.id=$1
   `
-  var queries = [
-    db.one(sql, [attributes.title])
-  ]
-  attributes.authors.forEach(function(author){
-    queries.push(createAuthor(author))
-  })
+  db.none(sql, [bookId, title])
+}
 
-  return Promise.all(queries)
-    .then(function(authors){
-      var book = authors.shift()
-      return Promise.all([
-        associateAuthorsWithBook(book.id, authors.map(a => a.id)),
-        associateGenresWithBook(book.id, attributes.genres),
-      ]).then(function(){
-        return book;
+const findOrCreateAuthor = function(attributes){
+  return db.oneOrNone('SELECT * FROM authors WHERE authors.name=$1 LIMIT 1', [attributes.name])
+    .then(author => {
+      console.log('findOrCreateAuthor', author)
+      if (author) return author;
+      return createAuthor(attributes)
+    });
+}
+
+const updateAuthorsForBook = function(bookId, authors){
+  console.log('updating authors', bookId, authors)
+  // remove exist author join table rows AKA links
+  // find or create author
+  // create join table row linking book to author
+
+  return db.none('DELETE FROM author_books WHERE book_id=$1', [bookId])
+    .then(()=> {
+      const findOrCreateAuthorsQueries = []
+      authors.forEach(author => {
+        if (author.name === '') return;
+        findOrCreateAuthorsQueries.push(findOrCreateAuthor(author))
+      })
+
+      return Promise.all(findOrCreateAuthorsQueries).then(authors => {
+        console.log('FOUND OR CREATED AUTHORS: ', authors)
+        return associateAuthorsWithBook(bookId, authors.map(a => a.id))
       })
     })
+}
+
+const updateGenresForBook = function(bookIds, genres){
+
+}
+
+
+const updateBook = function(bookId, attributes){
+  console.log('UPDATE BOOK', bookId, attributes)
+  return Promise.all([
+    updateBookTitle(bookId, attributes.title),
+    updateAuthorsForBook(bookId, attributes.authors),
+    updateGenresForBook(bookId, attributes.genres),
+  ])
+
+  // var queries = [
+  //   db.one(sql, [attributes.title])
+  // ]
+  // attributes.authors.forEach(function(author){
+  //   queries.push(createAuthor(author))
+  // })
+  //
+  // return Promise.all(queries)
+  //   .then(function(authors){
+  //     var book = authors.shift()
+  //     return Promise.all([
+  //       associateAuthorsWithBook(book.id, authors.map(a => a.id)),
+  //       associateGenresWithBook(book.id, attributes.genres),
+  //     ]).then(function(){
+  //       return book;
+  //     })
+  //   })
 }
 
 
@@ -266,4 +312,5 @@ module.exports = {
   getAllGenres: getAllGenres,
   getAuthorsByBookId: getAuthorsByBookId,
   searchForBooks:searchForBooks,
+  updateBook: updateBook,
 };

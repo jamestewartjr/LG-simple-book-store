@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+
+  form(action="/books/"+book.id, method="post")
+    div
+      input(type="text" name="book[title]", placeholder="Book Title" value=book.title)
+
+    for author, index in book.authors
+      div
+        input(type="text" name="book[authors]["+index+"][name]", placeholder="Author name" value=author.name)
+    div
+      input(type="text" name="book[authors]["+book.authors.length+"][name]", placeholder="Author name")
+    div
+      input(type="text" name="book[authors]["+book.authors.length+1+"][name]", placeholder="Author name")
+
+    div
+      select(name="book[genres]" multiple)
+        for genre in genres
+          option(value=genre.id selected=book.genreIds.includes(genre.id))= genre.title
+
+    input(type="submit", value="Save changes")

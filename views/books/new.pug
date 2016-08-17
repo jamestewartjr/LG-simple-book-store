@@ -12,14 +12,3 @@ block content
       for genre in genres
         option(value=genre.id)= genre.title
     input(type="submit", value="Submit your book!")
-
-
-  form(action="/books", method="post")
-    input(type="text" name="book[title]", placeholder="Book Title")
-    input(type="text" name="book[authors][0][name]", placeholder="Author name")
-    input(type="text" name="book[authors][1][name]", placeholder="Author name")
-    input(type="text" name="book[authors][2][name]", placeholder="Author name")
-    select(name="book[genres]" multiple)
-      for genre in genres
-        option(value=genre.id)= genre.title
-    input(type="submit", value="Update Your Book!")
