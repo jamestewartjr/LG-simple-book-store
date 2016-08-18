@@ -81,6 +81,7 @@ const createBook = function(attributes){
   const sql = `
     INSERT INTO
       books (title)
+      books (description)
     VALUES
      ($1)
     RETURNING
@@ -187,9 +188,6 @@ const findOrCreateAuthor = function(attributes){
 const updateAuthorsForBook = function(bookId, authors){
   if (typeof authors === 'undefined') return;
   console.log('updating authors', bookId, authors)
-  // remove exist author join table rows AKA links
-  // find or create author
-  // create join table row linking book to author
 
   return db.none('DELETE FROM author_books WHERE book_id=$1', [bookId])
     .then(()=> {
