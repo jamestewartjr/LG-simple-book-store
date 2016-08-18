@@ -16,6 +16,7 @@ router.get('/', function(req, res, next){
     })
 });
 
+
 // new
 router.get('/new', function(req, res) {
   database.getAllGenres()
@@ -35,7 +36,8 @@ router.post('/', function(req, res) {
     .then(function(book){
       res.redirect('/books/'+book.id)
     })
-})
+});
+
 
 // show / read
 router.get('/:bookId', function(req, res) {

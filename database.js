@@ -82,7 +82,6 @@ const createBook = function(attributes){
   const sql = `
     INSERT INTO
       books (title)
-      books (description)
     VALUES
      ($1)
     RETURNING
@@ -233,24 +232,6 @@ const updateBook = function(bookId, attributes){
     updateAuthorsForBook(bookId, attributes.authors),
     updateGenresForBook(bookId, attributes.genres),
   ])
-
-  // var queries = [
-  //   db.one(sql, [attributes.title])
-  // ]
-  // attributes.authors.forEach(function(author){
-  //   queries.push(createAuthor(author))
-  // })
-  //
-  // return Promise.all(queries)
-  //   .then(function(authors){
-  //     var book = authors.shift()
-  //     return Promise.all([
-  //       associateAuthorsWithBook(book.id, authors.map(a => a.id)),
-  //       associateGenresWithBook(book.id, attributes.genres),
-  //     ]).then(function(){
-  //       return book;
-  //     })
-  //   })
 }
 
 
@@ -285,66 +266,85 @@ const searchForBooks = function(options){
 
     variables.push(search_query)
     sql += `
-        WHERE
-      LOWER(books.title) LIKE $${variables.length}
+    JOIN
+      author_books
+    ON
+      books.id=author_books.book_id
+    JOIN
+      authors
+    ON
+      authors.id=author_books.author_id
+    JOIN
+      book_genres
+    ON
+      books.id=book_genres.book_id
+    JOIN
+      genres
+    ON
+      genres.id=book_genres.genre_id
+    WHERE
+      LOWER(books.title)  LIKE $${variables.length}
+    OR
+      LOWER(authors.name) LIKE $${variables.length}
+    OR
+      LOWER(genres.title) LIKE $${variables.length}
     `
   }
   console.log('----->', sql, variables)
   return db.any(sql, variables)
 }
-
-const searchForBook = searchTerm => {
-   const sql = `
-     SELECT
-       DISTINCT(books.*)
-     FROM
-       books
-     JOIN
-       book_author
-     ON
-       authors.id=book_author.author_id
-     JOIN
-       books
-     ON
-       book_author.book_id=books.id
-     WHERE
-       authors.author LIKE '$1%';
-   `
-   return db.any(sql, [searchTerm])
- }
-
- const searchForAuthor = searchTerm => {
-   const sql = `
-     SELECT
-       DISTINCT(authors.*)
-     FROM
-       authors
-     JOIN
-       book_author
-     ON
-       books.id=book_author.book_id
-     JOIN
-       authors
-     ON
-       book_author.author_id=authors.id
-     WHERE
-       authors.author LIKE '$1%';
-   `
-   return db.any(sql, [searchTerm])
- }
+//
+// const searchForBook = searchTerm => {
+//    let sql = `
+//      SELECT
+//        DISTINCT(books.*)
+//      FROM
+//        books
+//      JOIN
+//        author_books
+//      ON
+//        authors.id=authors_book.author_id
+//      JOIN
+//        books
+//      ON
+//        author_books.book_id=books.id
+//      WHERE
+//        authors.author LIKE '$1%';
+//    `
+//    return db.any(sql, [searchTerm])
+//  }
+//
+//  const searchForAuthor = searchTerm => {
+//    let sql = `
+//      SELECT
+//        DISTINCT(authors.*)
+//      FROM
+//        authors
+//      JOIN
+//        author_books
+//      ON
+//        books.id=book_author.book_id
+//      JOIN
+//        authors
+//      ON
+//        author_books.book_id=authors.id
+//      WHERE
+//        authors.author LIKE '$1%';
+//    `
+//    return db.any(sql, [searchTerm])
+//  }
 
 module.exports = {
   pgp: pgp,
   db: db,
   getAllBooks: getAllBooks,
+  getAllAuthors: getAllAuthors,
   getAllBooksWithAuthors: getAllBooksWithAuthors,
   getBookWithAuthorsAndGenresByBookId: getBookWithAuthorsAndGenresByBookId,
   getBookById: getBookById,
   createBook: createBook,
   getAllGenres: getAllGenres,
   getAuthorsByBookId: getAuthorsByBookId,
-  searchForBooks:searchForBooks,
-  searchForBook:searchForBook,
-  searchForAuthor:searchForAuthor,
+  searchForBooks: searchForBooks,
   updateBook: updateBook,
 };
