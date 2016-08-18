@@ -4,7 +4,12 @@ extends ../layout
 block content
 
   a(href="/")='Go Home'
+  a(href='./books/new')='Add a Book'
   ol
     for book in books
       li
         a(href="books/"+book.id)=book.title
+//- // div
+//- //  if page > 1
+//- //    a(href="/books?page="+(page-1)) Prev
+//- //    a(href="/books?page"+(page+1)) Next

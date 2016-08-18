@@ -51,6 +51,22 @@ if (app.get('env') === 'development') {
     });
   });
 }
+// app.get('/books')
+//   let page = paresInt(req.query.page, 10);
+//   if (isNaN(page)) page = 1
+//
+//   database.getAllBooks(page)
+//   .catch(function(error)){
+//     throw error
+//     .then(function(book){
+//       res.render('books.index', {
+//         page: page,
+//         book: book
+//       })
+//     })
+//     .catch(function(error)){
+//       throw error
+// })
 
 // production error handler
 // no stacktraces leaked to user

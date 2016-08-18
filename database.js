@@ -1,5 +1,6 @@
 'use strict';
 
+const databaseName = process.env.NODE_ENV ? 'bookstorebd-test' : 'bookstoredb'
 const pgp = require('pg-promise')();
 const connectionString = `postgres://${process.env.USER}@localhost:5432/clammy-tayra`
 const db = pgp(connectionString);
