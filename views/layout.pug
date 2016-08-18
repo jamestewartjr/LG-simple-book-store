@@ -1,7 +1,34 @@
-doctype html
+
+
 html
   head
     title= title
+    link(href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    nav.navbar.navbar-inverse
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/') Home
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/books') Books
+            li
+              a(href='/genres') Genres
+            li
+              a(href='/authors') Authors
+
+          form.navbar-form.navbar-left(action="/search-books", method="get")
+            .form-group
+              input.form-control(type="text", name="search_query", placeholder="Search by Title or Author")
+              button.btn.btn-default(type="submit", value="Submit") Submit
+          ul.nav.navbar-nav.navbar-right
+    div.container
+
+      block content
