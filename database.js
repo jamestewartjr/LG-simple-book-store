@@ -16,6 +16,10 @@ const getAllGenres = function(id){
   return db.any("select * from genres");
 }
 
+const getAllAuthors = function(id){
+  return db.any("select * from authors");
+}
+
 const getAllBooksWithAuthors = function() {
   return getAllBooks().then(function(books){
     console.log('GOT BOOKS', books)
@@ -59,6 +63,18 @@ const createAuthor = function(attributes){
       *
   `
   return db.one(sql, [attributes.name])
+}
+
+const createGenre = function(attributes){
+  const sql = `
+    INSERT INTO
+      genres (title)
+    VALUES
+     ($1)
+    RETURNING
+      *
+  `
+  return db.one(sql, [attributes.title])
 }
 
 const createBook = function(attributes){
@@ -169,6 +185,7 @@ const findOrCreateAuthor = function(attributes){
 }
 
 const updateAuthorsForBook = function(bookId, authors){
+  if (typeof authors === 'undefined') return;
   console.log('updating authors', bookId, authors)
   // remove exist author join table rows AKA links
   // find or create author
@@ -177,7 +194,7 @@ const updateAuthorsForBook = function(bookId, authors){
   return db.none('DELETE FROM author_books WHERE book_id=$1', [bookId])
     .then(()=> {
       const findOrCreateAuthorsQueries = []
-      authors.forEach(author => {
+        authors.forEach(author => {
         if (author.name === '') return;
         findOrCreateAuthorsQueries.push(findOrCreateAuthor(author))
       })
@@ -185,37 +202,27 @@ const updateAuthorsForBook = function(bookId, authors){
       return Promise.all(findOrCreateAuthorsQueries).then(authors => {
         console.log('FOUND OR CREATED AUTHORS: ', authors)
         return associateAuthorsWithBook(bookId, authors.map(a => a.id))
-      })
+      });
     })
 }
 
 const findOrCreateGenre = function(attributes){
   return db.oneOrNone('SELECT * FROM genres WHERE genres.title=$1 LIMIT 1', [attributes.title])
     .then(genre => {
-      console.log('findOrCreateGenre', genre)
-      if (genre) return genre;
+      if (genre) return;
       return createGenre(attributes)
     });
 }
 
-const updateGenresForBook = function(bookId, genres){
-  console.log('updating genres', bookId, genres)
-  // remove exist author join table rows AKA links
-  // find or create author
-  // create join table row linking book to author
+
+
+const updateGenresForBook = function(bookId, genreIds){
+  if (typeof genreIds === 'undefined') return
+  console.log('updating genres', bookId, genreIds)
 
   return db.none('DELETE FROM book_genres WHERE book_id=$1', [bookId])
     .then(()=> {
-      const findOrCreateGenresQueries = []
-      genres.forEach(genre => {
-        if (genre.title === '') return;
-        findOrCreateGenresQueries.push(findOrCreateGenre(genre))
-      })
-
-      return Promise.all(findOrCreateGenresQueries).then(genres => {
-        console.log('FOUND OR CREATED GENRES: ', genres)
-        return associateGenresWithBook(bookId, genres.map(a => a.id))
-      })
+      return associateGenresWithBook(bookId, genreIds)
     })
 }
 
@@ -338,5 +345,7 @@ module.exports = {
   getAllGenres: getAllGenres,
   getAuthorsByBookId: getAuthorsByBookId,
   searchForBooks:searchForBooks,
+  searchForBook:searchForBook,
+  searchForAuthor:searchForAuthor,
   updateBook: updateBook,
 };

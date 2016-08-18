@@ -76,7 +76,13 @@ router.get('/:bookId/edit', function(req, res) {
 // Update
 router.post('/:bookId', function(req, res) {
   const bookId = req.params.bookId
-  database.updateBook(bookId, req.body.book)
+  const attributes = req.body.book
+  if (typeof attributes.genres === 'string'){
+    attributes.genres = [attributes.genres]
+  }
+
+  console.log('req.body', JSON.stringify(req.body, null, 4) )
+  database.updateBook(bookId, attributes)
     .catch(function(error){
       console.error(error);
       res.status(500).render('error', {error: error})

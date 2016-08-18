@@ -12,7 +12,7 @@ block content
     div
       input(type="text" name="book[authors]["+book.authors.length+"][name]", placeholder="Author name")
     div
-      input(type="text" name="book[authors]["+book.authors.length+1+"][name]", placeholder="Author name")
+      input(type="text" name="book[authors]["+(book.authors.length+1)+"][name]", placeholder="Author name")
 
     div
       select(name="book[genres]" multiple)
