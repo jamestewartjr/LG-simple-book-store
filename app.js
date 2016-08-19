@@ -10,6 +10,7 @@ var users = require('./routes/users');
 var books = require('./routes/books');
 var add = require('./routes/add');
 var update = require('./routes/update');
+var authors = require('./routes/authors');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/books', books);
+app.use('/authors', authors);
 app.post('/add', add);
 app.post('/update', update);
 

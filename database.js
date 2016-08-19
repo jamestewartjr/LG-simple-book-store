@@ -318,6 +318,7 @@ module.exports = {
   getBookWithAuthorsAndGenresByBookId: getBookWithAuthorsAndGenresByBookId,
   getBookById: getBookById,
   createBook: createBook,
+  createAuthor: createAuthor,
   getAllGenres: getAllGenres,
   getAuthorsByBookId: getAuthorsByBookId,
   searchForBooks: searchForBooks,
