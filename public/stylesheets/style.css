@@ -1,8 +1,23 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  flex-basis: auto;
+  margin: 50px;
 }
 
 a {
   color: #00B7FF;
+}
+
+form {
+  border-style: inset;
+  border-color: #4B4551;
+  border-width: thin;
+}
+
+input[type=text] {
+    background-color: white;
+    background-position: 10px 10px;
 }

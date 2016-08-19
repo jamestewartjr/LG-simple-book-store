@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var books = require('./routes/books');
 var add = require('./routes/add');
+var update = require('./routes/update');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/books', books);
 app.post('/add', add);
+app.post('/update', update);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -49,6 +51,22 @@ if (app.get('env') === 'development') {
     });
   });
 }
+// app.get('/books')
+//   let page = paresInt(req.query.page, 10);
+//   if (isNaN(page)) page = 1
+//
+//   database.getAllBooks(page)
+//   .catch(function(error)){
+//     throw error
+//     .then(function(book){
+//       res.render('books.index', {
+//         page: page,
+//         book: book
+//       })
+//     })
+//     .catch(function(error)){
+//       throw error
+// })
 
 // production error handler
 // no stacktraces leaked to user

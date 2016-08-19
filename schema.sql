@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS books;
 
 CREATE TABLE books (
   id SERIAL PRIMARY KEY,
-  title varchar(255) NOT NULL
+  title varchar(255) NOT NULL,
 );
 
 DROP TABLE IF EXISTS genres;
