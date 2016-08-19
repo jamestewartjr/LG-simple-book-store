@@ -4,16 +4,7 @@ var database = require('../database');
 
 // index
 router.get('/', function(req, res, next){
-  database.getAllBooksWithAuthors()
-  database.searchForBooks(req.query)
-    .then(function(books){
-      res.render('books/index', {
-        books: books
-      })
-    })
-    .catch(function(error){
-      throw error;
-    })
+  res.redirect('/')
 });
 
 

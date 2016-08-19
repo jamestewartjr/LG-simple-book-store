@@ -266,19 +266,19 @@ const searchForBooks = function(options){
 
     variables.push(search_query)
     sql += `
-    JOIN
+    LEFT JOIN
       author_books
     ON
       books.id=author_books.book_id
-    JOIN
+    LEFT JOIN
       authors
     ON
       authors.id=author_books.author_id
-    JOIN
+    LEFT JOIN
       book_genres
     ON
       books.id=book_genres.book_id
-    JOIN
+    LEFT JOIN
       genres
     ON
       genres.id=book_genres.genre_id
@@ -290,49 +290,24 @@ const searchForBooks = function(options){
       LOWER(genres.title) LIKE $${variables.length}
     `
   }
+  if (options.order){
+  }else{
+    sql += `
+      ORDER BY books.id ASC
+    `
+  }
+  if (options.page){
+    let PAGE_SIZE = 10
+    let offset = (options.page - 1) * PAGE_SIZE
+    variables.push(offset)
+    sql += `
+    LIMIT ${PAGE_SIZE}
+    OFFSET $${variables.length}
+    `
+  }
   console.log('----->', sql, variables)
   return db.any(sql, variables)
 }
-//
-// const searchForBook = searchTerm => {
-//    let sql = `
-//      SELECT
-//        DISTINCT(books.*)
-//      FROM
-//        books
-//      JOIN
-//        author_books
-//      ON
-//        authors.id=authors_book.author_id
-//      JOIN
-//        books
-//      ON
-//        author_books.book_id=books.id
-//      WHERE
-//        authors.author LIKE '$1%';
-//    `
-//    return db.any(sql, [searchTerm])
-//  }
-//
-//  const searchForAuthor = searchTerm => {
-//    let sql = `
-//      SELECT
-//        DISTINCT(authors.*)
-//      FROM
-//        authors
-//      JOIN
-//        author_books
-//      ON
-//        books.id=book_author.book_id
-//      JOIN
-//        authors
-//      ON
-//        author_books.book_id=authors.id
-//      WHERE
-//        authors.author LIKE '$1%';
-//    `
-//    return db.any(sql, [searchTerm])
-//  }
 
 module.exports = {
   pgp: pgp,

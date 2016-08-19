@@ -2,13 +2,24 @@ extends ../layout
 
 
 block content
-
+  h1 page #{page}
   a(href="/")='Go Home'
   a(href='./books/new')='Add a Book'
-  ol
-    for book in books
-      li
-        a(href="books/"+book.id)=book.title
+  table
+    thead
+      tr
+        th ID
+        th Title
+    tbody
+      for book in books
+        tr
+          td
+            strong= book.id
+          td
+            a(href="books/"+book.id)= book.title
+  if page > 1
+    a(href="/?page="+(page-1)) prev
+  a(href="/?page="+(page+1)) next
 //- // div
 //- //  if page > 1
 //- //    a(href="/books?page="+(page-1)) Prev
