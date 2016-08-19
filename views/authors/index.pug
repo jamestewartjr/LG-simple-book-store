@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+  h1.page-header Authors
+  for author in authors
+    .row.jumbotron
+      .col-md-2
+        img.media-object.thumbnail(src= author.image_url, alt='...')
+      .col-md-10
+        a(href="/authors/"+author.id)
+          h3= author.name
+        p= author.description
+  if page > 1
+    a.btn.btn-info.pull-left(href="/authors?page="+(page-1)) Prev
+  a.btn.btn-info.pull-right(href="/authors?page="+(page+1)) Next

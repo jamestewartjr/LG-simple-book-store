@@ -2,13 +2,12 @@ extends ../layout
 
 
 block content
-  
-  a(href='./books/new')='Add a Book'
-  table
+
+  table.table
     thead
       tr
-        th ID
-        th Title
+        th #
+        th Book Title
     tbody
       for book in books
         tr
@@ -16,9 +15,13 @@ block content
             strong= book.id
           td
             a(href="books/"+book.id)= book.title
+      
   if page > 1
-    a(href="/?page="+(page-1)) prev
-  a(href="/?page="+(page+1)) next
+    a.btn.btn-default(href="/?page="+(page-1), role='button') Back
+  a.btn.btn-default(href="/?page="+(page+1), role='button') Next
+  .spaceGiverForm
+  a.btn.btn-default(href="./books/new", role='button') Add a Book
+
 //- // div
 //- //  if page > 1
 //- //    a(href="/books?page="+(page-1)) Prev
